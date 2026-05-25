@@ -9,9 +9,8 @@ def run_sanity_check():
     done = False
     while not done:
         t, u_observed = obs[0], obs[1]
-        action = env.action_space.sample()  # Random policy
+        action = env.action_space.sample()  
         
-        # Access internal true U for logging clarity
         true_u = env.current_U 
         
         next_obs, reward, terminated, truncated, info = env.step(action)

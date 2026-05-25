@@ -6,7 +6,6 @@ class RandomPolicy:
 
     def act(self, obs: np.ndarray) -> int:
         t = int(obs[0])
-        # Accept with probability 1/T each week
         prob_accept = 1.0 / self.T
         return int(np.random.rand() < prob_accept)
 
@@ -22,8 +21,6 @@ class ThresholdPolicy:
 
 class OptimalPolicy:
     def __init__(self):
-        # Hardcoded threshold lookup matching Problem 1(c) values of W_{t+1}
-        # Keys are week 't'. Value is accepted if u >= threshold
         self.thresholds = {
             1: 3.25,
             2: 3.00,

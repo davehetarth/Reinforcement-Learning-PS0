@@ -11,11 +11,8 @@ class ApartmentEnv(gym.Env):
         self.K = K
         self.noise_std = noise_std
         
-        # Action space: 0 = reject, 1 = accept
         self.action_space = spaces.Discrete(2)
         
-        # Observation space: Box(low=[1.0, -inf], high=[T, inf], dtype=float32)
-        # Handles continuous noisy observations comfortably
         low = np.array([1.0, -np.inf], dtype=np.float32)
         high = np.array([float(T), np.inf], dtype=np.float32)
         self.observation_space = spaces.Box(low=low, high=high, dtype=np.float32)
@@ -41,18 +38,16 @@ class ApartmentEnv(gym.Env):
         return self._get_obs(), {}
 
     def step(self, action: int):
-        # Terminated: Accepted an apartment or rejected at the final step T
-        # Truncated: Not explicitly used here but required by Gymnasium API
         terminated = False
         truncated = False
         reward = 0.0
         
-        if action == 1:  # ACCEPT
+        if action == 1:  
             reward = float(self.current_U)
             terminated = True
         else:  # REJECT
             if self.current_t >= self.T:
-                reward = 0.0  # Fallback to subletting
+                reward = 0.0  
                 terminated = True
             else:
                 self.current_t += 1

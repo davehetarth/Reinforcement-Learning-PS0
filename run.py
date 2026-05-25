@@ -39,7 +39,6 @@ def run_benchmarks():
     
     print(f"=== PART (c): Baseline Evaluation (T={T}, K={K}, No Noise) ===")
     
-    # 1. Evaluate Random & Optimal
     rand_policy = RandomPolicy(T=T)
     opt_policy = OptimalPolicy()
     
@@ -49,7 +48,6 @@ def run_benchmarks():
     print(f"Random Policy  -> Mean: {rand_mean:.4f} ± {rand_se:.4f} | Rejection Rate: {rand_rej*100:.2f}%")
     print(f"Optimal Policy -> Mean: {opt_mean:.4f} ± {opt_se:.4f} | Rejection Rate: {opt_rej*100:.2f}%")
     
-    # 2. Sweep Fixed Thresholds
     best_u_min = None
     best_thresh_mean = -1
     thresh_data = {}
@@ -64,7 +62,6 @@ def run_benchmarks():
             best_thresh_mean = t_mean
             best_u_min = u_min
             
-    # Plotting Baseline Histograms
     plt.figure(figsize=(10, 5))
     plt.hist(opt_returns, bins=np.arange(6)-0.5, alpha=0.5, label='Optimal Policy', edgecolor='black', rwidth=0.8)
     plt.hist(thresh_data[best_u_min], bins=np.arange(6)-0.5, alpha=0.4, label=f'Best Threshold ({best_u_min})', edgecolor='black', rwidth=0.6)
