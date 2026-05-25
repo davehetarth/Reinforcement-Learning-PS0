@@ -39,15 +39,17 @@ def run_benchmarks():
     
     print(f"=== PART (c): Baseline Evaluation (T={T}, K={K}, No Noise) ===")
     
+    # 1. Evaluate Random & Optimal
     rand_policy = RandomPolicy(T=T)
     opt_policy = OptimalPolicy()
     
-    _, rand_mean, rand_se, rand_rej = evaluate_policy(base_env, rand_policy, num_episodes)
+    rand_returns, rand_mean, rand_se, rand_rej = evaluate_policy(base_env, rand_policy, num_episodes)
     opt_returns, opt_mean, opt_se, opt_rej = evaluate_policy(base_env, opt_policy, num_episodes)
     
     print(f"Random Policy  -> Mean: {rand_mean:.4f} ± {rand_se:.4f} | Rejection Rate: {rand_rej*100:.2f}%")
     print(f"Optimal Policy -> Mean: {opt_mean:.4f} ± {opt_se:.4f} | Rejection Rate: {opt_rej*100:.2f}%")
     
+    # 2. Sweep Fixed Thresholds
     best_u_min = None
     best_thresh_mean = -1
     thresh_data = {}
@@ -62,17 +64,30 @@ def run_benchmarks():
             best_thresh_mean = t_mean
             best_u_min = u_min
             
-    plt.figure(figsize=(10, 5))
-    plt.hist(opt_returns, bins=np.arange(6)-0.5, alpha=0.5, label='Optimal Policy', edgecolor='black', rwidth=0.8)
-    plt.hist(thresh_data[best_u_min], bins=np.arange(6)-0.5, alpha=0.4, label=f'Best Threshold ({best_u_min})', edgecolor='black', rwidth=0.6)
+    # Plotting Baseline Histograms (Contains all three policies required by Part c)
+    plt.figure(figsize=(10, 6))
+    
+    # Histogram 1: Optimal Policy
+    plt.hist(opt_returns, bins=np.arange(6)-0.5, alpha=0.5, 
+             label='Optimal Policy', edgecolor='black', rwidth=0.8)
+    
+    # Histogram 2: Best Fixed Threshold Policy
+    plt.hist(thresh_data[best_u_min], bins=np.arange(6)-0.5, alpha=0.4, 
+             label=f'Best Threshold ({best_u_min})', edgecolor='black', rwidth=0.6)
+    
+    # Histogram 3: Random Policy
+    plt.hist(rand_returns, bins=np.arange(6)-0.5, alpha=0.3, 
+             label='Random Policy', edgecolor='black', rwidth=0.4)
+    
     plt.title("Distribution of Episode Returns (Noiseless Environment)")
-    plt.xlabel("Utility Value")
+    plt.xlabel("Utility Value (0 = Sublet, 1-4 = Apartment Quality)")
     plt.ylabel("Frequency Count")
     plt.xticks(range(5))
     plt.legend()
     plt.grid(axis='y', alpha=0.3)
     plt.savefig("baseline_comparison.png")
     plt.close()
+    print("\n[INFO] Saved complete three-policy histogram distribution to 'baseline_comparison.png'")
     
     print(f"\n=== PART (d): Noise Robustness Sweep ===")
     sigmas = [0.0, 0.5, 1.0, 2.0]
